@@ -19,7 +19,6 @@ class CreateCaseItemsTable extends Migration
             $table->text('discription');
             $table->integer('urgency')->default(1);
             $table->boolean('status')->default(False);
-
             $table->unsignedBigInteger('list_id');
             $table->foreign('list_id')->references('id')->on('todo_lists');
             $table->timestamps();
