@@ -29,10 +29,20 @@ Route::put('list_of_case/edit/{id}', 'App\Http\Controllers\TodoListController@ed
 Route::delete('list_of_case/delete/{id}', 'App\Http\Controllers\TodoListController@deleteList');
 
 // CRUD с делами
-Route::post('case/get/{id}', 'App\Http\Controllers\CaseItemController@getCase');
+//Route::post('case/get/{id}', 'App\Http\Controllers\CaseItemController@getCase');
 Route::put('case/edit/{id}', 'App\Http\Controllers\CaseItemController@editCase');
 Route::delete('case/delete/{id}', 'App\Http\Controllers\CaseItemController@deleteCase');
 Route::post('case/create/', 'App\Http\Controllers\CaseItemController@createCase');
 
 // Пометить дело как сделанное
 Route::get('case/mark-done/{id}', 'App\Http\Controllers\CaseItemController@markDoneCase');
+
+
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::post('case/get/{id}', 'App\Http\Controllers\CaseItemController@getCase');
+    Route::post('user', 'App\Http\Controllers\UserController@user');
+
+});
+
+Route::post('login', 'App\Http\Controllers\UserController@login');
+Route::post('register', 'App\Http\Controllers\UserController@register');
