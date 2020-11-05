@@ -8,6 +8,8 @@ namespace App\Services;
  */
 class ModelService
 {
+    public $code = 200;
+
     /**
      * @param $list
      * @param $sort

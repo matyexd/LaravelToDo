@@ -33,13 +33,14 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::delete('list_of_case/delete/{id}', 'App\Http\Controllers\TodoListController@delete');
 
     // CRUD с делами
-    Route::post('case/get/{id}', 'App\Http\Controllers\CaseItemController@getCase');
-    Route::put('case/edit/{id}', 'App\Http\Controllers\CaseItemController@editCase');
-    Route::delete('case/delete/{id}', 'App\Http\Controllers\CaseItemController@deleteCase');
-    Route::post('case/create/', 'App\Http\Controllers\CaseItemController@createCase');
+    Route::put('case/edit/{id}', 'App\Http\Controllers\CaseItemController@edit');
+    Route::delete('case/delete/{id}', 'App\Http\Controllers\CaseItemController@delete');
+    Route::post('case/create/', 'App\Http\Controllers\CaseItemController@create');
+    Route::post('case/get/{id}', 'App\Http\Controllers\CaseItemController@get');
 
     // Пометить дело как сделанное
-    Route::get('case/mark-done/{id}', 'App\Http\Controllers\CaseItemController@markDoneCase');
+    Route::put('case/mark-done/{id}', 'App\Http\Controllers\CaseItemController@markDone');
+
     Route::post('user', 'App\Http\Controllers\UserController@user');
 
 });

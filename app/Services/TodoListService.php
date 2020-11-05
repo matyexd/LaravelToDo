@@ -6,7 +6,7 @@ namespace App\Services;
 use App\Models\CaseItem;
 use App\Models\TodoList;
 use Carbon\Carbon;
-use http\Env\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class TodoListService
@@ -15,15 +15,24 @@ use http\Env\Request;
 class TodoListService extends ModelService
 {
     /**
+     * TodoListService constructor.
+     * @param CaseItemService $caseService
+     */
+
+    /**
      * @param $request
      * @return mixed
      */
     public function getListSortAndCount($request)
     {
+        $list = TodoList::where('user_id', Auth::user()->id);
         $countList = $this->listCount($request->count);
-        $skip = TodoList::where('user_id', $request->user()->id)->count() - $countList;
+        $skip = $list->count() - $countList;
 
-        $listOfLists = TodoList::where('user_id', $request->user()->id)->skip($skip)->take($countList)->get();
+        $listOfLists = $list
+            ->skip($skip)
+            ->take($countList)
+            ->get();
 
         $sortList = $this->listSort($listOfLists, $request->sort);
 
@@ -33,28 +42,29 @@ class TodoListService extends ModelService
     /**
      * @param $id
      * @param $request
-     * @return \Illuminate\Http\JsonResponse|mixed
+     * @return array|mixed
      */
     public function getListCaseSort($id, $request)
     {
-        $listCase = TodoList::find($id);
+        $list = TodoList::find($id);
 
-        if((!$listCase) or ($request->user()->id))
-        {
-            return response()->json(['Error' => true, 'message' => 'Not found'], 400);
+        if(!$this->hasList($list)){
+            $this->code = 400;
+            return ['Error' => true, 'message' => 'Not found'];
         }
-        $listCase = $listCase->getCases;
-        $sortList = parent::listSort($listCase, $request->sort);
+
+        $result = $list->getCases;
+        $sortList = parent::listSort($result, $request->sort);
         return $sortList;
     }
 
     /**
      * @param $request
-     * @return mixed
+     * @return mixed\
      */
     public function createList($request){
         $result = TodoList::create($request->all());
-        $result->user_id = $request->user()->id;
+        $result->user_id = Auth::user()->id;
         $result->created_at = Carbon::now();
         $result->updated_at = Carbon::now();
 
@@ -66,42 +76,55 @@ class TodoListService extends ModelService
     /**
      * @param $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      */
     public function editList($request, $id){
-        $result = TodoList::find($id);
+        $list = TodoList::find($id);
 
-        if((!$result) or ($result->user_id != $request->user()->id))
-        {
-            return response()->json(['Error' => true, 'message' => 'Not found'], 400);
+        if(!$this->hasList($list)){
+            $this->code = 400;
+            return ['Error' => true, 'message' => 'Not found'];
         }
 
-        $result->updated_at = Carbon::now();
-        $result->name = $request->name;
+        $list->updated_at = Carbon::now();
+        $list->name = $request->name;
 
-        $result->save();
+        $list->save();
 
-        return $result;
+        return $list;
     }
 
     /**
      * @param $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse|string[]
+     * @return array|string[]
      */
     public function deleteList($request, $id){
-        $result = TodoList::find($id);
-        if((!$result) or ($result->id != $request->user()->id))
-        {
-            return response()->json(['Error' => true, 'message' => 'Not found'], 400);
+        $list = TodoList::find($id);
+        if(!$this->hasList($list)){
+            $this->code = 400;
+            return ['Error' => true, 'message' => 'Not found'];
         }
 
         // Delete cases of list
-        $list_id = $result->id;
+        $list_id = $list->id;
         CaseItem::where('list_id', $list_id)->delete();
         // Delete list
-        $result->delete();
+        $list->delete();
 
         return ['Done'];
+    }
+
+    /**
+     * @param $result
+     * @return bool
+     */
+    public function hasList($result){
+        if (($result) and (Auth::user()->id == $result->user_id)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
