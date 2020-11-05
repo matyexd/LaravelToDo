@@ -18,55 +18,34 @@ class TodoListController extends Controller
         $this->todoService = $todoService;
     }
 
-    public function createList(TodoListRequest $request)
+    public function create(TodoListRequest $request)
     {
-        $result = TodoList::create($request->all());
-        $result->created_at = Carbon::now();
-        $result->updated_at = Carbon::now();
-
-        $result->save();
-
+        $result = $this->todoService->createList($request);
         return response()->json($result, 400);
     }
 
+
     public function getListOfLists(Request $request)
     {
-        $sortList = $this->todoService->getListSortAndCount($request->sort, $request->count);
-
-        return response()->json($sortList, 200);
-    }
-
-    public function editList(TodoListRequest $request, $id)
-    {
-        $result = TodoList::find($id);
-        if(!$result)
-        {
-            return response()->json(['Error' => true, 'message' => 'Not found'], 400);
-        }
-
-        $result->updated_at = Carbon::now();
-        $result->name = $request->name;
-
-        $result->save();
-
+        $result = $this->todoService->getListSortAndCount($request);
         return response()->json($result, 200);
     }
 
-    public function deleteList($id)
-    {
-        $list = TodoList::find($id);
-        if(!$list)
-        {
-            return response()->json(['Error' => true, 'message' => 'Not found'], 400);
-        }
 
-        $list->delete();
-        return response()->json(['Done'], 204);
+    public function edit(TodoListRequest $request, $id)
+    {
+        $result = $this->todoService->editList($request, $id);
+        return response()->json($result, 200);
+    }
+
+    public function delete(Request $request, $id)
+    {
+        $result = $this->todoService->deleteList($request, $id);
+        return response()->json($result, 204);
     }
 
     public function getListCases(Request $request, $id) {
-        $sortList = $this->todoService->getListCaseSort($id, $request->sort);
-
-        return response()->json($sortList, 200);
+        $result = $this->todoService->getListCaseSort($id, $request);
+        return response()->json($result, 200);
     }
 }

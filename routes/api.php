@@ -19,27 +19,27 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-// Получить список списков
-Route::post('list_of_lists/get/', 'App\Http\Controllers\TodoListController@getListOfLists');
-
-// CRUD со списками дел
-Route::post('list_of_case/get/{id}', 'App\Http\Controllers\TodoListController@getListCases');
-Route::post('list_of_case/create/', 'App\Http\Controllers\TodoListController@createList');
-Route::put('list_of_case/edit/{id}', 'App\Http\Controllers\TodoListController@editList');
-Route::delete('list_of_case/delete/{id}', 'App\Http\Controllers\TodoListController@deleteList');
-
-// CRUD с делами
-//Route::post('case/get/{id}', 'App\Http\Controllers\CaseItemController@getCase');
-Route::put('case/edit/{id}', 'App\Http\Controllers\CaseItemController@editCase');
-Route::delete('case/delete/{id}', 'App\Http\Controllers\CaseItemController@deleteCase');
-Route::post('case/create/', 'App\Http\Controllers\CaseItemController@createCase');
-
-// Пометить дело как сделанное
-Route::get('case/mark-done/{id}', 'App\Http\Controllers\CaseItemController@markDoneCase');
 
 
 Route::group(['middleware' => 'auth:api'], function() {
+
+    // Получить список списков
+    Route::post('list_of_lists/get', 'App\Http\Controllers\TodoListController@getListOfLists');
+
+    // CRUD со списками дел
+    Route::post('list_of_case/get/{id}', 'App\Http\Controllers\TodoListController@getListCases');
+    Route::post('list_of_case/create/', 'App\Http\Controllers\TodoListController@create');
+    Route::put('list_of_case/edit/{id}', 'App\Http\Controllers\TodoListController@edit');
+    Route::delete('list_of_case/delete/{id}', 'App\Http\Controllers\TodoListController@delete');
+
+    // CRUD с делами
     Route::post('case/get/{id}', 'App\Http\Controllers\CaseItemController@getCase');
+    Route::put('case/edit/{id}', 'App\Http\Controllers\CaseItemController@editCase');
+    Route::delete('case/delete/{id}', 'App\Http\Controllers\CaseItemController@deleteCase');
+    Route::post('case/create/', 'App\Http\Controllers\CaseItemController@createCase');
+
+    // Пометить дело как сделанное
+    Route::get('case/mark-done/{id}', 'App\Http\Controllers\CaseItemController@markDoneCase');
     Route::post('user', 'App\Http\Controllers\UserController@user');
 
 });

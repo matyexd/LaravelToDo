@@ -16,6 +16,8 @@ class CreateTodoListsTable extends Migration
         Schema::create('todo_lists', function (Blueprint $table) {
             $table->bigIncrements('id')->autoIncrement();
             $table->string('name');
+            $table->integer('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

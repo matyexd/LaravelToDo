@@ -2,9 +2,18 @@
 
 namespace App\Services;
 
+/**
+ * Class ModelService
+ * @package App\Services
+ */
 class ModelService
 {
-    public function getListSort($list, $sort)
+    /**
+     * @param $list
+     * @param $sort
+     * @return mixed
+     */
+    public function listSort($list, $sort)
     {
         // Сортировка: 1 - по дате создания, 2 - по дате обновления, 3 - по имени, по умолчанию - по id
         switch ($sort)
@@ -25,11 +34,14 @@ class ModelService
         return $sortList;
     }
 
-    public function count($count)
+    /**
+     * @param $count
+     * @return int
+     */
+    public function listCount($count)
     {
         $countList = 10;
-        if(($count) and ($count < 101))
-        {
+        if (($count) and ($count < 101)) {
             $countList = $count;
         }
 
